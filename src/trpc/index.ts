@@ -13,16 +13,16 @@ export const appRouter = router({
 
 		const dbUser = await db.user.findFirst({
 			where: {
-				id: user.id
-			}
+				id: user.id,
+			},
 		});
 
 		if (!dbUser) {
 			await db.user.create({
 				data: {
 					id: user.id,
-					email: user.email
-				}
+					email: user.email,
+				},
 			});
 		}
 
@@ -33,40 +33,60 @@ export const appRouter = router({
 
 		return await db.file.findMany({ where: { userId } });
 	}),
-	getFile: privateProcedure.input(z.object({ key: z.string() })).mutation(async ({ ctx, input }) => {
-		const { userId } = ctx;
+	getFileUploadStatus: privateProcedure
+		.input(z.object({ fileId: z.string() }))
+		.query(async ({ input, ctx }) => {
+			const file = await db.file.findFirst({
+				where: {
+					id: input.fileId,
+					userId: ctx.userId,
+				},
+			});
 
-		const file = await db.file.findFirst({
-			where: {
-				key: input.key,
-				userId
-			}
-		});
+			if (!file) return { status: 'PENDING' as const };
 
-		if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
+			return {
+				status: file.uploadStatus,
+			};
+		}),
+	getFile: privateProcedure
+		.input(z.object({ key: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const { userId } = ctx;
 
-		return file;
-	}),
-	deleteFile: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-		const { userId } = ctx;
+			const file = await db.file.findFirst({
+				where: {
+					key: input.key,
+					userId,
+				},
+			});
 
-		const file = await db.file.findFirst({
-			where: {
-				id: input.id,
-				userId,
-			}
-		});
+			if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
 
-		if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
+			return file;
+		}),
+	deleteFile: privateProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const { userId } = ctx;
 
-		await db.file.delete({
-			where: {
-				id: input.id
-			}
-		});
+			const file = await db.file.findFirst({
+				where: {
+					id: input.id,
+					userId,
+				},
+			});
 
-		return file;
-	})
+			if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
+
+			await db.file.delete({
+				where: {
+					id: input.id,
+				},
+			});
+
+			return file;
+		}),
 });
 
 export type AppRouter = typeof appRouter;

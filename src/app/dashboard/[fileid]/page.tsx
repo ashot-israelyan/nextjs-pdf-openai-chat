@@ -1,4 +1,4 @@
-import ChatWrapper from '@/components/ChatWrapper';
+import ChatWrapper from '@/components/chat/ChatWrapper';
 import PdfRenderer from '@/components/PdfRenderer';
 import { db } from '@/db';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
@@ -37,8 +37,8 @@ const Page: FC<PageProps> = async ({ params }) => {
 					</div>
 				</div>
 
-				<div className="shrink-0 flex-[0.75] border-gray-200 lg:w-96 lg:border-l border-t-0">
-					<ChatWrapper />
+				<div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
+					<ChatWrapper fileId={file.id} />
 				</div>
 			</div>
 		</div>

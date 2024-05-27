@@ -1,11 +1,11 @@
 import { db } from '@/db';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { createUploadthing, type FileRouter } from 'uploadthing/next';
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
-	pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
+	pdfUploader: f({ pdf: { maxFileSize: '4MB' } })
 		.middleware(async ({ req }) => {
 			const { getUser } = getKindeServerSession();
 			const user = getUser();
@@ -13,7 +13,7 @@ export const ourFileRouter = {
 			if (!user || !user.id) throw new Error('Unauthorized');
 
 			return {
-				userId: user.id
+				userId: user.id,
 			};
 		})
 		.onUploadComplete(async ({ metadata, file }) => {
@@ -23,11 +23,12 @@ export const ourFileRouter = {
 					name: file.name,
 					userId: metadata.userId,
 					url: file.url,
-					uploadStatus: 'PROCESSING'
-				}
+					uploadStatus: 'PROCESSING',
+				},
 			});
 
-
+			try {
+			} catch (error) {}
 		}),
 } satisfies FileRouter;
 
