@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, Loader2, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2, RotateCcw, Search } from 'lucide-react';
 import { FC, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { useResizeDetector } from 'react-resize-detector';
@@ -30,9 +30,14 @@ interface PdfRendererProps {
 const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
 	const [numPages, setNumPages] = useState<number>();
 	const [currPage, setCurrPage] = useState<number>(1);
+	const [scale, setScale] = useState<number>(1);
+	const [rotation, setRotation] = useState<number>(0);
+	const [renderedScale, setRenderedScale] = useState<number | null>(null);
 
 	const { toast } = useToast();
 	const { width, ref } = useResizeDetector();
+
+	const isLoading = renderedScale !== scale;
 
 	const CustomPageValidator = z.object({
 		page: z.string().refine((num) => Number(num) > 0 && Number(num) <= numPages!),
@@ -107,12 +112,25 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
 						<DropdownMenuTrigger asChild>
 							<Button className="gap-1.5" aria-label="zoom" variant="ghost">
 								<Search className="h-4 w-4" />
+								{scale * 100}%
+								<ChevronDown className="h-3 w-3 opacity-50" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
-							<DropdownMenuItem>100%</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setScale(1)}>100%</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setScale(1.5)}>150%</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setScale(2)}>200%</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setScale(2.5)}>250%</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
+
+					<Button
+						onClick={() => setRotation((prev) => prev + 90)}
+						variant="ghost"
+						aria-label="rotate 90 degrees"
+					>
+						<RotateCcw className="h-4 w-4" />
+					</Button>
 				</div>
 			</div>
 
