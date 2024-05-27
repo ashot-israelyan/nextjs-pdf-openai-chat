@@ -17,8 +17,6 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
 
 	const { toast } = useToast();
 
-	console.log(numPages);
-
 	const { width, ref } = useResizeDetector();
 
 	return (
