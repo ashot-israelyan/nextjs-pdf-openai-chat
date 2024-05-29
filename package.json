@@ -40,6 +40,7 @@
 		"react-dropzone": "^14.2.3",
 		"react-hook-form": "^7.51.5",
 		"react-loading-skeleton": "^3.4.0",
+		"react-markdown": "^9.0.1",
 		"react-pdf": "^8.0.2",
 		"react-resize-detector": "^10.0.1",
 		"react-textarea-autosize": "^8.5.3",
