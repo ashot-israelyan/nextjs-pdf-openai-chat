@@ -4,6 +4,7 @@ import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query';
+import { absoluteUrl } from '@/lib/utils';
 
 export const appRouter = router({
 	authCallback: publicProcedure.query(async () => {
@@ -33,6 +34,11 @@ export const appRouter = router({
 		const { userId } = ctx;
 
 		return await db.file.findMany({ where: { userId } });
+	}),
+	createStripeSession: privateProcedure.mutation(({ ctx }) => {
+		const { userId } = ctx;
+
+		const billingUrl = absoluteUrl('/dashboard/billing');
 	}),
 	getFileMessages: privateProcedure
 		.input(
