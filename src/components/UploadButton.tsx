@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { Dialog, DialogContent } from './ui/dialog';
 import { DialogTrigger } from '@radix-ui/react-dialog';
 import { Button } from './ui/button';
@@ -13,12 +13,12 @@ import { useToast } from './ui/use-toast';
 import { trpc } from '@/app/_trpc/client';
 import { useRouter } from 'next/navigation';
 
-const UploadDropzone = () => {
+const UploadDropzone: FC<{ isSubscribed: boolean }> = ({ isSubscribed }) => {
 	const [isUploading, setIsUploading] = useState<boolean>(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
 
 	const router = useRouter();
-	const { startUpload } = useUploadThing('pdfUploader');
+	const { startUpload } = useUploadThing(isSubscribed ? 'proPlanUploader' : 'freePlanUploader');
 	const { toast } = useToast();
 
 	const { mutate: startPolling } = trpc.getFile.useMutation({
@@ -134,7 +134,7 @@ const UploadDropzone = () => {
 	);
 };
 
-const UploadButton = () => {
+const UploadButton: FC<{ isSubscribed: boolean }> = ({ isSubscribed }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	return (
@@ -151,7 +151,7 @@ const UploadButton = () => {
 			</DialogTrigger>
 
 			<DialogContent>
-				<UploadDropzone />
+				<UploadDropzone isSubscribed={isSubscribed} />
 			</DialogContent>
 		</Dialog>
 	);
